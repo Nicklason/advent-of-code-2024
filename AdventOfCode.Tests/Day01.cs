@@ -18,4 +18,12 @@ public class Day01
 
         Assert.Equal(11, result);
     }
+
+    [Fact]
+    public void Solve_2()
+    {
+        var result = AdventOfCode.Day01.Solve_2(_input);
+
+        Assert.Equal(31, result);
+    }
 }

@@ -19,7 +19,7 @@ public class Day01 : BaseDay
             .ToList();
     }
 
-    public static Int32 Solve_1(string input)
+    public static int Solve_1(string input)
     {
         var numbers = ParseInput(input);
 
@@ -45,7 +45,30 @@ public class Day01 : BaseDay
         return difference;
     }
 
+    public static int Solve_2(string input)
+    {
+        var numbers = ParseInput(input);
+
+        var left = new List<int>();
+        var right = new Dictionary<int, int>();
+
+        foreach (var (num1, num2) in numbers)
+        {
+            left.Add(num1);
+            right[num2] = right.GetValueOrDefault(num2, 0) + 1;
+        }
+        int similarity = 0;
+
+        foreach (var num1 in left)
+        {
+            var count2 = right.GetValueOrDefault(num1, 0);
+            similarity += num1 * count2;
+        }
+
+        return similarity;
+    }
+
     public override ValueTask<string> Solve_1() => new(Solve_1(_input).ToString());
 
-    public override ValueTask<string> Solve_2() => new("");
+    public override ValueTask<string> Solve_2() => new(Solve_2(_input).ToString());
 }
