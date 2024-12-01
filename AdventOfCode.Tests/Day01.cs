@@ -16,6 +16,6 @@ public class Day01
     {
         var result = AdventOfCode.Day01.Solve_1(_input);
 
-        Assert.Equal(result, 11);
+        Assert.Equal(11, result);
     }
 }
