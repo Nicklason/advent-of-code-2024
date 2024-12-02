@@ -23,12 +23,9 @@ public class Day02 : BaseDay
             .Select(int.Parse)
             .ToList();
 
-        if (!AreSafeLevels(levels))
+        if (!dampener)
         {
-            if (!dampener)
-            {
-                return false;
-            }
+            return AreSafeLevels(levels);
         }
 
         for (var i = 0; i < levels.Count; i++)
