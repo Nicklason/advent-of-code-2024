@@ -3,8 +3,7 @@
 public class Day01
 {
     private readonly string _input =
-        @"
-3   4
+        @"3   4
 4   3
 2   5
 1   3
