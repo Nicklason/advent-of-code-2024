@@ -1,5 +1,7 @@
 namespace AdventOfCode;
 
+using System.Diagnostics;
+
 public class Day02 : BaseDay
 {
     private readonly string _input;
@@ -19,7 +21,7 @@ public class Day02 : BaseDay
             var parts = line.Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
             var previous = int.Parse(parts[0]);
-            int direction = 1;
+            int direction = 0;
 
             for (var i = 1; i < parts.Length; i++)
             {
@@ -27,7 +29,7 @@ public class Day02 : BaseDay
 
                 var difference = num - previous;
                 previous = num;
-                if (i == 1)
+                if (direction == 0)
                 {
                     if (difference == 0)
                     {
@@ -35,6 +37,8 @@ public class Day02 : BaseDay
                     }
                     direction = difference > 0 ? 1 : -1;
                 }
+
+                Debug.Assert(direction != 0);
 
                 var abs = Math.Abs(difference);
                 if (difference * direction < 0)
