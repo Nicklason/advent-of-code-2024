@@ -16,23 +16,24 @@ public class Day02 : BaseDay
         return list.Slice(0, index).Concat(list.Slice(index + 1, list.Count - index - 1)).ToList();
     }
 
-    public static bool IsSafe(string line, bool useDampener)
+    public static bool IsSafeReport(string report, bool dampener)
     {
-        var numbers = line.Split(" ", StringSplitOptions.RemoveEmptyEntries)
+        var levels = report
+            .Split(" ", StringSplitOptions.RemoveEmptyEntries)
             .Select(int.Parse)
             .ToList();
 
-        if (!AreSafeLevels(numbers))
+        if (!AreSafeLevels(levels))
         {
-            if (!useDampener)
+            if (!dampener)
             {
                 return false;
             }
         }
 
-        for (var i = 0; i < numbers.Count; i++)
+        for (var i = 0; i < levels.Count; i++)
         {
-            var slice = RemoveOneFromList(numbers, i);
+            var slice = RemoveOneFromList(levels, i);
             if (AreSafeLevels(slice))
             {
                 return true;
@@ -58,8 +59,6 @@ public class Day02 : BaseDay
                 direction = difference > 0 ? 1 : -1;
             }
 
-            Debug.Assert(Math.Abs(direction) == 1);
-
             if (difference * direction < 0)
             {
                 return false;
@@ -75,14 +74,14 @@ public class Day02 : BaseDay
         return true;
     }
 
-    public static int Solve(string input, bool useDampener)
+    public static int Solve(string input, bool dampener)
     {
-        var lines = input.Split("\n", StringSplitOptions.RemoveEmptyEntries);
+        var reports = input.Split("\n", StringSplitOptions.RemoveEmptyEntries);
 
         var safe = 0;
-        foreach (var line in lines)
+        foreach (var report in reports)
         {
-            if (IsSafe(line, useDampener))
+            if (IsSafeReport(report, dampener))
             {
                 safe++;
             }
