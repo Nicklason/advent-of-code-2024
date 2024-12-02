@@ -1,7 +1,5 @@
 namespace AdventOfCode;
 
-using System.Diagnostics;
-
 public class Day02 : BaseDay
 {
     private readonly string _input;
