@@ -6,10 +6,7 @@ public class Day03 : BaseDay
 {
     private readonly string _input;
 
-    private static readonly Regex _part1 = new Regex(
-        @"mul\((\d{1,3}),(\d{1,3})\)",
-        RegexOptions.Singleline
-    );
+    private static readonly Regex _part1 = new Regex(@"mul\((\d{1,3}),(\d{1,3})\)");
     private static readonly Regex _part2 = new Regex(
         @"don't\(\).*?($|do\(\))",
         RegexOptions.Singleline
