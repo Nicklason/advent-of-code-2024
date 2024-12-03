@@ -26,7 +26,7 @@ public class Day03 : BaseDay
 
     public static int Solve_2(string input)
     {
-        return Solve_1(_part2.Replace(input, ""));
+        return Solve_1(_part2.Replace(input, " "));
     }
 
     public override ValueTask<string> Solve_1() => new(Day03.Solve_1(_input).ToString());

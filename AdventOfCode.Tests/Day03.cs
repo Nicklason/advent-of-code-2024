@@ -21,4 +21,14 @@ public class Day03
 
         Assert.Equal(48, result);
     }
+
+    [Fact]
+    public void Solve_2_Edgecase()
+    {
+        var input = "mul(2,4don't()do())";
+
+        var result = AdventOfCode.Day03.Solve_2(input);
+
+        Assert.Equal(0, result);
+    }
 }
