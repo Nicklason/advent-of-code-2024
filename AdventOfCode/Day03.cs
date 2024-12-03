@@ -22,13 +22,7 @@ public class Day03 : BaseDay
 
     public static int Solve_1(string input)
     {
-        var matches = _part1.Matches(input);
-
-        var result = matches
-            .Select((match) => (int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value)))
-            .Aggregate(0, (acc, pair) => acc + (pair.Item1 * pair.Item2));
-
-        return result;
+        return _part1.Matches(input).Sum(match => int.Parse(match.Groups[1].Value) * int.Parse(match.Groups[2].Value));
     }
 
     public static int Solve_2(string input)
