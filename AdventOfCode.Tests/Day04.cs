@@ -27,6 +27,25 @@ MXMXAXMASX";
     {
         var result = AdventOfCode.Day04.Solve_2(_input);
 
-        Assert.Equal(0, result);
+        Assert.Equal(9, result);
+    }
+
+    [Fact]
+    public void CharOfSliceCoordinate()
+    {
+        var lines = _input.Split(
+            "\n",
+            StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries
+        );
+
+        var width = lines[0].Count();
+        var height = lines.Count();
+
+        var slices = AdventOfCode.Day04.SliceDiagonal(lines, true);
+        // It is part of slice 10, and the character index is 1 (SAMM is the slice)
+        var result = AdventOfCode.Day04.CharOfSliceCoordinate(10, 1, width, height, true);
+
+        // Find the A at x=2, y=1 of the input
+        Assert.Equal((2, 1), result);
     }
 }
