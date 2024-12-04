@@ -86,16 +86,17 @@ public class Day04 : BaseDay
         return slices;
     }
 
-    public static (int, int) CharOfSliceCoordinate(
+    public static (int, int) CharOfSliceCoords(
         int sliceIndex,
         int charIndex,
-        int width,
-        int height,
+        (int width, int height) dimensions,
         bool leftToRight
     )
     {
         var x = 0;
         var y = 0;
+
+        var (width, height) = dimensions;
 
         if (sliceIndex < height)
         {
@@ -122,24 +123,12 @@ public class Day04 : BaseDay
             "\n",
             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
         );
+        var slices = SliceHorizontal(lines)
+            .Concat(SliceVertical(lines))
+            .Concat(SliceDiagonal(lines, false))
+            .Concat(SliceDiagonal(lines, true));
 
-        var width = lines[0].Length;
-        var height = lines.Length;
-
-        var slices = new List<string>();
-
-        SliceHorizontal(lines).ToList().ForEach(slices.Add);
-        SliceVertical(lines).ToList().ForEach(slices.Add);
-        SliceDiagonal(lines, false).ToList().ForEach(slices.Add);
-        SliceDiagonal(lines, true).ToList().ForEach(slices.Add);
-
-        var count = 0;
-        for (var i = 0; i < slices.Count; i++)
-        {
-            count += regex1.Count(slices[i]) + regex2.Count(slices[i]);
-        }
-
-        return count;
+        return slices.Sum(slice => regex1.Count(slice) + regex2.Count(slice));
     }
 
     public static int Solve_2(string input)
@@ -149,54 +138,39 @@ public class Day04 : BaseDay
             StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
         );
 
-        var width = lines[0].Length;
-        var height = lines.Length;
-
-        var slices1 = SliceDiagonal(lines, false);
-        var slices2 = SliceDiagonal(lines, true);
-
+        var dimensions = (lines[0].Length, lines.Length);
+        var regexes = new[] { regex3, regex4 };
         var possible = new HashSet<(int, int)>();
 
+        var slices1 = SliceDiagonal(lines, false);
         for (var i = 0; i < slices1.Count(); i++)
         {
-            regex3
-                .Matches(slices1[i])
-                .ToList()
-                .ForEach(match =>
-                    possible.Add(CharOfSliceCoordinate(i, match.Index + 1, width, height, false))
-                );
-
-            regex4
-                .Matches(slices1[i])
-                .ToList()
-                .ForEach(match =>
-                    possible.Add(CharOfSliceCoordinate(i, match.Index + 1, width, height, false))
-                );
+            foreach (var regex in regexes)
+            {
+                foreach (Match match in regex.Matches(slices1[i]))
+                {
+                    // We are assuming that we look for the middle character of the match
+                    var charIndex = match.Index + (match.Length / 2);
+                    possible.Add(CharOfSliceCoords(i, charIndex, dimensions, false));
+                }
+            }
         }
 
-        var count = 0;
+        var slices2 = SliceDiagonal(lines, true);
 
+        var count = 0;
         for (var i = 0; i < slices2.Count(); i++)
         {
-            count += regex3
-                .Matches(slices2[i])
-                .ToList()
-                .FindAll(match =>
-                    possible.Contains(
-                        CharOfSliceCoordinate(i, match.Index + 1, width, height, true)
-                    )
-                )
-                .Count();
-
-            count += regex4
-                .Matches(slices2[i])
-                .ToList()
-                .FindAll(match =>
-                    possible.Contains(
-                        CharOfSliceCoordinate(i, match.Index + 1, width, height, true)
-                    )
-                )
-                .Count();
+            foreach (var regex in regexes)
+            {
+                foreach (Match match in regex.Matches(slices2[i]))
+                {
+                    var charIndex = match.Index + (match.Length / 2);
+                    count += possible.Contains(CharOfSliceCoords(i, charIndex, dimensions, true))
+                        ? 1
+                        : 0;
+                }
+            }
         }
 
         return count;
