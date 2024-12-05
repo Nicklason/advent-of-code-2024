@@ -12,45 +12,36 @@ public class Day05 : BaseDay
     public static (Dictionary<int, List<int>>, List<int[]>) ParseInput(string input)
     {
         var lines = input.Trim().Split("\n", StringSplitOptions.TrimEntries);
+        var blankIndex = Array.IndexOf(lines, "");
 
-        var rules = new Dictionary<int, List<int>>();
+        var rules = lines
+            .Take(blankIndex)
+            .Select(line => line.Split("|").Select(int.Parse).ToArray())
+            .GroupBy(parts => parts[1], parts => parts[0])
+            .ToDictionary(group => group.Key, group => group.ToList());
 
-        var i = 0;
-
-        for (; i < lines.Length; i++)
-        {
-            var line = lines[i];
-            if (line == "")
-            {
-                break;
-            }
-
-            var parts = line.Split("|");
-
-            var first = int.Parse(parts[0]);
-            var second = int.Parse(parts[1]);
-
-            if (rules.ContainsKey(second))
-            {
-                rules[second].Add(first);
-            }
-            else
-            {
-                rules.Add(second, new List<int> { first });
-            }
-        }
-
-        var updates = new List<int[]>();
-
-        for (i++; i < lines.Length; i++)
-        {
-            var line = lines[i];
-
-            var pages = line.Split(",").Select(int.Parse).ToArray();
-            updates.Add(pages);
-        }
+        var updates = lines
+            .Skip(blankIndex + 1)
+            .Select(line => line.Split(",").Select(int.Parse).ToArray())
+            .ToList();
 
         return (rules, updates);
+    }
+
+    public static bool IsValid(Dictionary<int, List<int>> rules, int[] update)
+    {
+        var test = new HashSet<int>();
+
+        foreach (var page in update)
+        {
+            if (test.Contains(page))
+            {
+                return false;
+            }
+            test.UnionWith(rules.GetValueOrDefault(page, new List<int>()));
+        }
+
+        return true;
     }
 
     public static int Solve_1(string input)
@@ -61,25 +52,7 @@ public class Day05 : BaseDay
 
         foreach (var update in updates)
         {
-            var test = new HashSet<int>();
-
-            var good = true;
-
-            foreach (var page in update)
-            {
-                if (test.Contains(page))
-                {
-                    good = false;
-                    break;
-                }
-
-                foreach (var rule in rules.GetValueOrDefault(page, new List<int>()))
-                {
-                    test.Add(rule);
-                }
-            }
-
-            if (good)
+            if (IsValid(rules, update))
             {
                 sum += update[update.Length / 2];
             }
