@@ -45,6 +45,6 @@ public class Day05
     {
         var result = AdventOfCode.Day05.Solve_2(_input);
 
-        Assert.Equal(0, result);
+        Assert.Equal(123, result);
     }
 }
