@@ -48,37 +48,24 @@ public class Day05 : BaseDay
     {
         var (rules, updates) = ParseInput(input);
 
-        var sum = 0;
-
-        foreach (var update in updates)
-        {
-            if (IsValid(rules, update))
-            {
-                sum += update[update.Count / 2];
-            }
-        }
-
-        return sum;
+        return updates
+            .Where(update => IsValid(rules, update))
+            .Select((update => update[update.Count / 2]))
+            .Sum();
     }
 
     public static int Solve_2(string input)
     {
         var (rules, updates) = ParseInput(input);
-        int sum = 0;
 
-        foreach (var update in updates)
-        {
-            if (IsValid(rules, update))
+        return updates
+            .Where(update => !IsValid(rules, update))
+            .Select(update =>
             {
-                continue;
-            }
-
-            update.Sort((a, b) => rules.ContainsKey(a) && rules[a].Contains(b) ? 1 : -1);
-
-            sum += update[update.Count / 2];
-        }
-
-        return sum;
+                update.Sort((a, b) => rules.ContainsKey(a) && rules[a].Contains(b) ? 1 : -1);
+                return update[update.Count / 2];
+            })
+            .Sum();
     }
 
     public override ValueTask<string> Solve_1() => new(Day05.Solve_1(_input).ToString());
