@@ -17,27 +17,6 @@ public class Day06 : BaseDay
         _input = File.ReadAllText(InputFilePath);
     }
 
-    public static (int, int) Dimensions(string input)
-    {
-        var width = input.IndexOf(Environment.NewLine);
-        var height = (input.Length) / (width + Environment.NewLine.Length - 1);
-        return (width, height);
-    }
-
-    public static (int, int) IndexToPosition(int index, (int, int) dimensions)
-    {
-        var y =
-            (index + Environment.NewLine.Length - 1)
-            / (dimensions.Item2 + Environment.NewLine.Length);
-        var x = index % (y * (dimensions.Item1 + Environment.NewLine.Length));
-        return (x, y);
-    }
-
-    public static int PositionToIndex((int, int) position, (int, int) dimensions)
-    {
-        return position.Item1 + position.Item2 * (dimensions.Item1 + Environment.NewLine.Length);
-    }
-
     public static (int, int) NextPosition(Direction direction, (int, int) position)
     {
         var nextX = position.Item1;
@@ -74,41 +53,88 @@ public class Day06 : BaseDay
         return !(maxX >= x && x >= minX && maxY >= y && y >= minY);
     }
 
-    public static int Solve_1(string input)
+    public static (IEnumerable<(int, int)> visited, bool loop) Path(
+        Dictionary<(int, int), char> map,
+        (int, int) position
+    )
     {
-        var dimensions = Dimensions(input);
-        var position = IndexToPosition(input.IndexOf("^"), dimensions);
-
         var direction = Direction.Up;
 
-        var visited = new HashSet<(int, int)>();
+        var visited = new HashSet<(Direction, (int, int))>();
 
-        while (!Outside(position, dimensions))
+        while (map.ContainsKey(position) && !visited.Contains((direction, position)))
         {
-            visited.Add(position);
+            visited.Add((direction, position));
 
-            var nextPosition = NextPosition(direction, position);
-            if (Outside(nextPosition, dimensions))
-            {
-                break;
-            }
-
-            var isObstacle = input[PositionToIndex(nextPosition, dimensions)] == '#';
-            if (isObstacle)
+            var next = NextPosition(direction, position);
+            if (map.GetValueOrDefault(next) == '#')
             {
                 direction = (Direction)((1 + ((int)direction)) % 4);
-                nextPosition = NextPosition(direction, position);
             }
-
-            position = nextPosition;
+            else
+            {
+                position = next;
+            }
         }
 
-        return visited.Count();
+        return (
+            visited: visited.Select(p => p.Item2).Distinct(),
+            loop: visited.Contains((direction, position))
+        );
+    }
+
+    public static (Dictionary<(int, int), char>, (int, int)) Parse(string input)
+    {
+        var lines = input.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+
+        var map = new Dictionary<(int, int), char>();
+
+        for (var y = 0; y < lines.Length; y++)
+        {
+            for (var x = 0; x < lines[0].Length; x++)
+            {
+                map[(x, y)] = lines[y][x];
+            }
+        }
+
+        var start = map.First(x => x.Value == '^').Key;
+
+        return (map, start);
+    }
+
+    public static int Solve_1(string input)
+    {
+        var (map, start) = Parse(input);
+        return Path(map, start).visited.Count();
     }
 
     public static int Solve_2(string input)
     {
-        return 0;
+        var (map, start) = Parse(input);
+
+        var positions = Path(map, start).visited;
+
+        var loops = 0;
+
+        foreach (var position in positions)
+        {
+            if (map.GetValueOrDefault(position) != '.')
+            {
+                continue;
+            }
+
+            map[position] = '#';
+
+            var path = Path(map, start);
+            if (path.loop)
+            {
+                loops++;
+            }
+
+            map[position] = '.';
+        }
+
+        return loops;
     }
 
     public override ValueTask<string> Solve_1() => new(Day06.Solve_1(_input).ToString());

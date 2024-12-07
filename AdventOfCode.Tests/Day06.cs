@@ -27,39 +27,18 @@ public class Day06
     {
         var result = AdventOfCode.Day06.Solve_2(_input);
 
-        Assert.Equal(0, result);
-    }
-    
-    [Fact]
-    public void Dimensions()
-    {
-        var dimensions = AdventOfCode.Day06.Dimensions(_input);
-
-        Assert.Equal((10,10), dimensions);
+        Assert.Equal(6, result);
     }
 
     [Fact]
-    public void IndexToPosition()
+    public void Loops()
     {
-        var dimensions = AdventOfCode.Day06.Dimensions(_input);
-        
-        var index = _input.Length - 1;
+        var (map, start) = AdventOfCode.Day06.Parse(_input);
 
-        var pos = AdventOfCode.Day06.IndexToPosition(index, dimensions);
+        map[(3, 6)] = '#';
 
-        Assert.Equal((9, 9), pos);
-    }
+        var path = AdventOfCode.Day06.Path(map, start);
 
-    [Fact]
-    public void PositionToIndex()
-    {
-        var dimensions = AdventOfCode.Day06.Dimensions(_input);
-        var guardIndex = _input.IndexOf("^");
- 
-        var guardPos = (4,6);
-
-        var calculatedGuardIndex = AdventOfCode.Day06.PositionToIndex(guardPos, dimensions);
-
-        Assert.Equal(calculatedGuardIndex, guardIndex);
+        Assert.Equal(true, path.loop);
     }
 }
