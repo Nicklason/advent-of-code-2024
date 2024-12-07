@@ -20,20 +20,22 @@ public class Day06 : BaseDay
     public static (int, int) Dimensions(string input)
     {
         var width = input.IndexOf(Environment.NewLine);
-        var height = (input.Length) / (width);
+        var height = (input.Length) / (width + Environment.NewLine.Length - 1);
         return (width, height);
     }
 
     public static (int, int) IndexToPosition(int index, (int, int) dimensions)
     {
-        var y = (index + 1) / (dimensions.Item2 + 1);
-        var x = index % (y * (dimensions.Item1 + 1));
+        var y =
+            (index + Environment.NewLine.Length - 1)
+            / (dimensions.Item2 + Environment.NewLine.Length);
+        var x = index % (y * (dimensions.Item1 + Environment.NewLine.Length));
         return (x, y);
     }
 
     public static int PositionToIndex((int, int) position, (int, int) dimensions)
     {
-        return position.Item1 + position.Item2 * (dimensions.Item1 + 1);
+        return position.Item1 + position.Item2 * (dimensions.Item1 + Environment.NewLine.Length);
     }
 
     public static (int, int) NextPosition(Direction direction, (int, int) position)
