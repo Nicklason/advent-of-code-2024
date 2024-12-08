@@ -16,6 +16,18 @@ public class Day08
 ..........#.
 ..........#.";
 
+    private readonly string _simpleInput =
+        @"T....#....
+...T......
+.T....#...
+.........#
+..#.......
+..........
+...#......
+..........
+....#.....
+..........";
+
     [Fact]
     public void Solve_1()
     {
@@ -29,6 +41,14 @@ public class Day08
     {
         var result = AdventOfCode.Day08.Solve_2(_input);
 
-        Assert.Equal(0, result);
+        Assert.Equal(34, result);
+    }
+
+    [Fact]
+    public void Solve_2_Simple()
+    {
+        var result = AdventOfCode.Day08.Solve_2(_simpleInput);
+
+        Assert.Equal(9, result);
     }
 }

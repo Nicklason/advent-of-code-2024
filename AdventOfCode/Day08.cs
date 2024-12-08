@@ -73,7 +73,39 @@ public class Day08 : BaseDay
 
     public static int Solve_2(string input)
     {
-        return 0;
+        var (map, frequencies) = Parse(input);
+
+        var antinodes = new HashSet<Complex>();
+
+        foreach (var (frequency, positions) in frequencies)
+        {
+            for (var i = 0; i < positions.Count(); i++)
+            {
+                for (var j = i + 1; j < positions.Count(); j++)
+                {
+                    Complex antenna1 = positions[i];
+                    Complex antenna2 = positions[j];
+
+                    var difference = antenna1 - antenna2;
+
+                    var antinode1 = antenna1;
+                    while (map.ContainsKey(antinode1))
+                    {
+                        antinodes.Add(antinode1);
+                        antinode1 += difference;
+                    }
+
+                    var antinode2 = antenna2;
+                    while (map.ContainsKey(antinode2))
+                    {
+                        antinodes.Add(antinode2);
+                        antinode2 -= difference;
+                    }
+                }
+            }
+        }
+
+        return antinodes.Count();
     }
 
     public override ValueTask<string> Solve_1() => new(Solve_1(_input).ToString());
