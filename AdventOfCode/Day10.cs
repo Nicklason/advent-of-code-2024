@@ -35,7 +35,7 @@ public class Day10 : BaseDay
         Complex position,
         Dictionary<Complex, int> map,
         int steps,
-        HashSet<Complex> ends
+        ICollection<Complex> ends
     )
     {
         if (!map.ContainsKey(position))
@@ -78,7 +78,14 @@ public class Day10 : BaseDay
 
     public static int Solve_2(string input)
     {
-        return 0;
+        var (map, lowest) = Parse(input);
+
+        return lowest.Sum(position =>
+        {
+            var heads = new List<Complex>();
+            DiscoverTrail(position, map, 0, heads);
+            return heads.Count;
+        });
     }
 
     public override ValueTask<string> Solve_1() => new(Solve_1(_input).ToString());
