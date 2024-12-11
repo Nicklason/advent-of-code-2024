@@ -39,6 +39,6 @@ public class Day06
 
         var path = AdventOfCode.Day06.Path(map, start);
 
-        Assert.Equal(true, path.loop);
+        Assert.True(path.loop);
     }
 }
