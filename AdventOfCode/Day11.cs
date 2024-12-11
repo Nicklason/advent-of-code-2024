@@ -18,34 +18,34 @@ public class Day11 : BaseDay
             .ToDictionary(stone => stone.Key, stones => (long)stones.Count());
     }
 
-    public static Dictionary<long, long> Simulate(Dictionary<long, long> stones)
+    public static (long Left, long Right) Change(long stone)
+    {
+        if (stone == 0)
+        {
+            return (1, -1);
+        }
+
+        var digits = Math.Floor(Math.Log10(stone) + 1);
+        if (digits % 2 == 0)
+        {
+            var temp = stone / (Math.Pow(10, digits / 2));
+            var left = (long)Math.Floor(temp);
+            var remainder = temp - left;
+            var right = (long)Math.Round(remainder * Math.Pow(10, digits / 2));
+
+            return (left, right);
+        }
+
+        return (stone * 2024, -1);
+    }
+
+    public static Dictionary<long, long> Blink(Dictionary<long, long> stones)
     {
         var result = new Dictionary<long, long>();
 
-        foreach (var (current, count) in stones)
+        foreach (var (label, count) in stones)
         {
-            long left = -1;
-            long right = -1;
-
-            if (current == 0)
-            {
-                left = 1;
-            }
-            else
-            {
-                var digits = Math.Floor(Math.Log10(current) + 1);
-                if (digits % 2 == 0)
-                {
-                    var temp = current / (Math.Pow(10, digits / 2));
-                    left = (long)Math.Floor(temp);
-                    var remainder = temp - left;
-                    right = (long)Math.Round(remainder * Math.Pow(10, digits / 2));
-                }
-                else
-                {
-                    left = current * 2024;
-                }
-            }
+            var (left, right) = Change(label);
 
             result[left] = result.GetValueOrDefault(left, 0L) + count;
             if (right != -1)
@@ -63,7 +63,7 @@ public class Day11 : BaseDay
 
         for (var i = 0; i < 25; i++)
         {
-            stones = Simulate(stones);
+            stones = Blink(stones);
         }
 
         return stones.Sum(stone => stone.Value);
@@ -75,7 +75,7 @@ public class Day11 : BaseDay
 
         for (var i = 0; i < 75; i++)
         {
-            stones = Simulate(stones);
+            stones = Blink(stones);
         }
 
         return stones.Sum(stone => stone.Value);
