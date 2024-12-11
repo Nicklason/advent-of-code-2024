@@ -9,63 +9,76 @@ public class Day11 : BaseDay
         _input = File.ReadAllText(InputFilePath).Trim();
     }
 
-    public static LinkedList<long> Parse(string input)
+    public static Dictionary<long, long> Parse(string input)
     {
-        return new LinkedList<long>(input.Split(' ').Select(long.Parse));
+        return input
+            .Split(' ')
+            .Select(long.Parse)
+            .GroupBy(stone => stone)
+            .ToDictionary(stone => stone.Key, stones => (long)stones.Count());
     }
 
-    public static void Simulate(LinkedList<long> stones)
+    public static Dictionary<long, long> Simulate(Dictionary<long, long> stones)
     {
-        var next = stones.First;
+        var result = new Dictionary<long, long>();
 
-        while (next != null)
+        foreach (var (current, count) in stones)
         {
-            var current = next;
-            if (current.Value == 0)
+            long left = -1;
+            long right = -1;
+
+            if (current == 0)
             {
-                current.Value = 1;
+                left = 1;
             }
             else
             {
-                var digits = Math.Floor(Math.Log10(current.Value) + 1);
+                var digits = Math.Floor(Math.Log10(current) + 1);
                 if (digits % 2 == 0)
                 {
-                    var value = current.Value;
-                    var temp = value / (Math.Pow(10, digits / 2));
-                    var left = Math.Floor(temp);
+                    var temp = current / (Math.Pow(10, digits / 2));
+                    left = (long)Math.Floor(temp);
                     var remainder = temp - left;
-                    var right = Math.Round(remainder * Math.Pow(10, digits / 2));
-
-                    current.Value = (long)left;
-                    current = new LinkedListNode<long>((long)right);
-
-                    stones.AddAfter(next, current);
+                    right = (long)Math.Round(remainder * Math.Pow(10, digits / 2));
                 }
                 else
                 {
-                    current.Value *= 2024;
+                    left = current * 2024;
                 }
             }
 
-            next = current.Next;
+            result[left] = result.GetValueOrDefault(left, 0L) + count;
+            if (right != -1)
+            {
+                result[right] = result.GetValueOrDefault(right, 0L) + count;
+            }
         }
+
+        return result;
     }
 
-    public static int Solve_1(string input)
+    public static long Solve_1(string input)
     {
-        var list = Parse(input);
+        var stones = Parse(input);
 
         for (var i = 0; i < 25; i++)
         {
-            Simulate(list);
+            stones = Simulate(stones);
         }
 
-        return list.Count();
+        return stones.Sum(stone => stone.Value);
     }
 
-    public static int Solve_2(string input)
+    public static long Solve_2(string input)
     {
-        return 0;
+        var stones = Parse(input);
+
+        for (var i = 0; i < 75; i++)
+        {
+            stones = Simulate(stones);
+        }
+
+        return stones.Sum(stone => stone.Value);
     }
 
     public override ValueTask<string> Solve_1() => new(Solve_1(_input).ToString());

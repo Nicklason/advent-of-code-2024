@@ -11,12 +11,4 @@ public class Day11
 
         Assert.Equal(55312, result);
     }
-
-    [Fact]
-    public void Solve_2()
-    {
-        var result = AdventOfCode.Day11.Solve_2(_input);
-
-        Assert.Equal(0, result);
-    }
 }
