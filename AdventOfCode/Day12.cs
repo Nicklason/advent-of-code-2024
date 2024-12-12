@@ -80,25 +80,22 @@ public class Day12 : BaseDay
         return region;
     }
 
-    public static int Perimiter(ISet<Complex> region)
+    public static int Perimiter(Complex position, ISet<Complex> region)
     {
         var perimiter = 0;
 
-        foreach (var position in region)
+        foreach (var direction in Directions)
         {
-            foreach (var direction in Directions)
+            if (!region.Contains(position + direction))
             {
-                if (!region.Contains(position + direction))
-                {
-                    perimiter++;
-                }
+                perimiter++;
             }
         }
 
         return perimiter;
     }
 
-    public static int Solve_1(string input)
+    public static int FindPrice(string input, Func<Complex, ISet<Complex>, int> counter)
     {
         var map = Parse(input);
 
@@ -110,10 +107,9 @@ public class Day12 : BaseDay
         {
             var region = DiscoverRegion(remaining.First(), map);
 
-            total += region.Count * Perimiter(region);
-
             foreach (var location in region)
             {
+                total += region.Count * counter(location, region);
                 remaining.Remove(location);
             }
         }
@@ -121,26 +117,28 @@ public class Day12 : BaseDay
         return total;
     }
 
-    public static int Sides(ISet<Complex> region)
+    public static int Solve_1(string input)
+    {
+        return FindPrice(input, Perimiter);
+    }
+
+    public static int Sides(Complex position, ISet<Complex> region)
     {
         var sides = 0;
 
-        foreach (var position in region)
+        foreach (var (ud, rl) in Corners)
         {
-            foreach (var (ud, rl) in Corners)
+            if (!region.Contains(position + ud) && !region.Contains(position + rl))
             {
-                if (!region.Contains(position + ud) && !region.Contains(position + rl))
-                {
-                    sides++;
-                }
-                else if (
-                    region.Contains(position + ud)
-                    && region.Contains(position + rl)
-                    && !region.Contains(position + ud + rl)
-                )
-                {
-                    sides++;
-                }
+                sides++;
+            }
+            else if (
+                region.Contains(position + ud)
+                && region.Contains(position + rl)
+                && !region.Contains(position + ud + rl)
+            )
+            {
+                sides++;
             }
         }
 
@@ -149,25 +147,7 @@ public class Day12 : BaseDay
 
     public static int Solve_2(string input)
     {
-        var map = Parse(input);
-
-        var remaining = new HashSet<Complex>(map.Keys);
-
-        var total = 0;
-
-        while (remaining.Count > 0)
-        {
-            var region = DiscoverRegion(remaining.First(), map);
-
-            total += region.Count * Sides(region);
-
-            foreach (var location in region)
-            {
-                remaining.Remove(location);
-            }
-        }
-
-        return total;
+        return FindPrice(input, Sides);
     }
 
     public override ValueTask<string> Solve_1() => new(Solve_1(_input).ToString());
