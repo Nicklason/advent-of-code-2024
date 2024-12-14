@@ -26,12 +26,4 @@ Prize: X=18641, Y=10279";
 
         Assert.Equal(480, result);
     }
-
-    [Fact]
-    public void Solve_2()
-    {
-        var result = AdventOfCode.Day13.Solve_2(_input);
-
-        Assert.Equal(0, result);
-    }
 }
