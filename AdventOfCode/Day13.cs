@@ -15,16 +15,11 @@ public class Day13 : BaseDay
 
     public static IEnumerable<ClawMachine> Parse(string input)
     {
-        var list = new List<(int, int)>();
-
-        var matches = _regex.Matches(input);
-
-        var machines = matches
+        return _regex
+            .Matches(input)
             .Select(match => (int.Parse(match.Groups[2].Value), int.Parse(match.Groups[4].Value)))
             .Chunk(3)
             .Select(chunk => new ClawMachine(chunk[0], chunk[1], chunk[2]));
-
-        return machines;
     }
 
     public static (long A, long B)? Solve(ClawMachine machine)
