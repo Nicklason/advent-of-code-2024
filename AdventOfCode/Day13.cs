@@ -27,7 +27,7 @@ public class Day13 : BaseDay
         return machines;
     }
 
-    public static (int A, int B)? Solve(ClawMachine machine)
+    public static (long A, long B)? Solve(ClawMachine machine)
     {
         var determinant = machine.A.X * machine.B.Y - machine.A.Y * machine.B.X;
         if (determinant == 0)
@@ -35,13 +35,13 @@ public class Day13 : BaseDay
             return null;
         }
 
-        int determinantA =
+        long determinantA =
             machine.Destination.X * machine.B.Y - machine.Destination.Y * machine.B.X;
-        int determinantB =
+        long determinantB =
             machine.A.X * machine.Destination.Y - machine.A.Y * machine.Destination.X;
 
-        int a = determinantA / determinant;
-        int b = determinantB / determinant;
+        long a = determinantA / determinant;
+        long b = determinantB / determinant;
 
         if (a < 0 || b < 0 || determinantA % determinant != 0 || determinantB % determinant != 0)
         {
@@ -51,7 +51,7 @@ public class Day13 : BaseDay
         return (a, b);
     }
 
-    public static int Tokens(ClawMachine machine)
+    public static long Tokens(ClawMachine machine)
     {
         var solved = Solve(machine);
 
@@ -63,15 +63,23 @@ public class Day13 : BaseDay
         return solved.Value.A * 3 + solved.Value.B;
     }
 
-    public static int Solve_1(string input)
+    public static long Solve_1(string input)
     {
         var machines = Parse(input);
         return machines.Sum(Tokens);
     }
 
-    public static int Solve_2(string input)
+    public static long Solve_2(string input)
     {
-        return 0;
+        var machines = Parse(input);
+        return machines.Sum(machine =>
+        {
+            machine.Destination = (
+                machine.Destination.X + 10000000000000,
+                machine.Destination.Y + 10000000000000
+            );
+            return Tokens(machine);
+        });
     }
 
     public override ValueTask<string> Solve_1() => new(Solve_1(_input).ToString());
@@ -80,11 +88,11 @@ public class Day13 : BaseDay
 
     public class ClawMachine
     {
-        public readonly (int X, int Y) A;
-        public readonly (int X, int Y) B;
-        public (int X, int Y) Destination;
+        public readonly (long X, long Y) A;
+        public readonly (long X, long Y) B;
+        public (long X, long Y) Destination;
 
-        public ClawMachine((int, int) a, (int, int) b, (int, int) destination)
+        public ClawMachine((long, long) a, (long, long) b, (long, long) destination)
         {
             A = a;
             B = b;
