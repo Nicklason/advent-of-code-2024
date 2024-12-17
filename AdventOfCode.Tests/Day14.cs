@@ -34,16 +34,8 @@ p=9,5 v=-3,-3";
     [Fact]
     public void Solve_1()
     {
-        var result = AdventOfCode.Day14.Solve(_input, (11, 7));
+        var result = AdventOfCode.Day14.Solve_1(_input, (11, 7));
 
         Assert.Equal(12, result);
-    }
-
-    [Fact]
-    public void Solve_2()
-    {
-        var result = AdventOfCode.Day14.Solve_2(_input);
-
-        Assert.Equal(0, result);
     }
 }
